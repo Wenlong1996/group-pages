@@ -4,7 +4,6 @@
 <head>
   <meta charset="UTF-8">
   <title>第 1 组页面</title>
-  
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
     body {
@@ -31,23 +30,31 @@
       font-size: 1.2rem;
       margin: 0.5rem 0;
     }
-  </style>
 
+      img, video, iframe {
+      max-width: 100%;
+      margin-top: 1rem;
+    }
+  </style>
 </head>
 <body>
   <h1>欢迎来到第 1 组页面</h1>
   <div>下一个提示倒计时：</div>
   <div id="timer">05:00</div>
   <div id="prompt" style="margin-top:20px;"></div>
+
   <script>
     const prompts = [
-      "提示 1：圣经旧约。",
-      "提示 2：君王",
-      "提示 3：星空后裔！"
+      { type: "youtube", content: "https://www.youtube.com/embed/Dt7wUTZDNI8" },
+      { type: "text", content: "提示 ：旧约。" },
+      { type: "image", content: "https://raw.githubusercontent.com/Wenlong1996/group-pages/main/media/img1.jpg" },
+      { type: "audio", content: "https://raw.githubusercontent.com/Wenlong1996/group-pages/main/media/audio1.mp3" },
+      { type: "text", content: "提示 ：君王。" }
     ];
 
     let index = 0;
     let time = 10;
+    let timerInterval = null;
 
     function updateTimerDisplay() {
       const minutes = String(Math.floor(time / 60)).padStart(2, '0');
@@ -57,21 +64,50 @@
 
     function showPrompt() {
       const promptBox = document.getElementById("prompt");
+
       if (index < prompts.length) {
-        const p = document.createElement("p");
-        p.innerText = prompts[index];
-        promptBox.appendChild(p);
+        const prompt = prompts[index];
+        let element;
+
+        if (prompt.type === "text") {
+          element = document.createElement("p");
+          element.innerText = prompt.content;
+        } else if (prompt.type === "image") {
+          element = document.createElement("img");
+          element.src = prompt.content;
+        } else if (prompt.type === "audio") {
+          element = document.createElement("audio");
+          element.src = prompt.content;
+          element.controls = true;
+          element.autoplay = true;
+        }  else if (prompt.type === "youtube") {
+          element = document.createElement("iframe");
+          element.src = prompt.content;
+          element.width = "100%";
+          element.height = "215";
+          element.frameBorder = "0";
+          element.allow = "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture";
+          element.allowFullscreen = true;
+        }
+
+        promptBox.appendChild(element);
         index++;
-      } else {
+      }
+
+      if (index >= prompts.length) {
+        clearInterval(timerInterval);
         const done = document.createElement("p");
-        done.innerText = "所有提示已显示完毕。";
+        done.innerText = "🎉 所有提示已播放完毕。";
+        done.style.color = "green";
+        done.style.fontWeight = "bold";
         promptBox.appendChild(done);
       }
     }
 
+
     function startCountdown() {
       updateTimerDisplay();
-      setInterval(() => {
+      timerInterval = setInterval(() => {
         time--;
         updateTimerDisplay();
 
@@ -83,6 +119,7 @@
     }
 
     startCountdown();
+
   </script>
 </body>
 </html>

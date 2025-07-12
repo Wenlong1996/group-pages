@@ -4,7 +4,6 @@
 <head>
   <meta charset="UTF-8">
   <title>第 27 组页面</title>
-  
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
     body {
@@ -31,23 +30,31 @@
       font-size: 1.2rem;
       margin: 0.5rem 0;
     }
-  </style>
 
+    img, video {
+      max-width: 100%;
+      height: auto;
+      margin: 10px 0;
+    }
+  </style>
 </head>
 <body>
   <h1>欢迎来到第 27 组页面</h1>
   <div>下一个提示倒计时：</div>
   <div id="timer">05:00</div>
   <div id="prompt" style="margin-top:20px;"></div>
+
   <script>
     const prompts = [
-      "提示 1：保持专注。",
-      "提示 2：请继续任务。",
-      "提示 3：时间过得很快，加油！"
+      { type: "text", content: "提示 1：保持专注。" },
+      { type: "image", content: "https://via.placeholder.com/300x200.png?text=图片提示" },
+      { type: "audio", content: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" },
+      { type: "video", content: "https://www.w3schools.com/html/mov_bbb.mp4" }
     ];
 
     let index = 0;
     let time = 300;
+    let timerInterval = null;
 
     function updateTimerDisplay() {
       const minutes = String(Math.floor(time / 60)).padStart(2, '0');
@@ -57,21 +64,46 @@
 
     function showPrompt() {
       const promptBox = document.getElementById("prompt");
+
       if (index < prompts.length) {
-        const p = document.createElement("p");
-        p.innerText = prompts[index];
-        promptBox.appendChild(p);
+        const prompt = prompts[index];
+        let element;
+
+        if (prompt.type === "text") {
+          element = document.createElement("p");
+          element.innerText = prompt.content;
+        } else if (prompt.type === "image") {
+          element = document.createElement("img");
+          element.src = prompt.content;
+        } else if (prompt.type === "audio") {
+          element = document.createElement("audio");
+          element.src = prompt.content;
+          element.controls = true;
+          element.autoplay = true;
+        } else if (prompt.type === "video") {
+          element = document.createElement("video");
+          element.src = prompt.content;
+          element.controls = true;
+          element.autoplay = true;
+        }
+
+        promptBox.appendChild(element);
         index++;
-      } else {
+      }
+
+      if (index >= prompts.length) {
+        clearInterval(timerInterval);
         const done = document.createElement("p");
-        done.innerText = "所有提示已显示完毕。";
+        done.innerText = "🎉 所有提示已播放完毕。";
+        done.style.color = "green";
+        done.style.fontWeight = "bold";
         promptBox.appendChild(done);
       }
     }
 
     function startCountdown() {
       updateTimerDisplay();
-      setInterval(() => {
+      timerInterval = setInterval(() => {
         time--;
         updateTimerDisplay();
 
