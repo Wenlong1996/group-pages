@@ -1,0 +1,26 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>输入组别</title>
+</head>
+<body>
+  <h2>请输入您的组别编号（1 - 31）</h2>
+  <input type="number" id="groupNumber" min="1" max="31" />
+  <button onclick="goToGroupPage()">进入</button>
+
+  <script>
+    function goToGroupPage() {
+      const group = parseInt(document.getElementById("groupNumber").value);
+
+      if (!isNaN(group) && group >= 1 && group <= 31) {
+        const page = `page${group}.html`;
+        window.location.href = page;
+      } else {
+        alert("请输入有效的组别编号（1 到 31）");
+      }
+    }
+  </script>
+</body>
+</html>

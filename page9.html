@@ -1,0 +1,71 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>第 9 组页面</title>
+  <style>
+    #timer {
+      font-size: 2em;
+      color: red;
+    }
+    #prompt p {
+      font-size: 1.2em;
+      margin: 10px 0;
+    }
+  </style>
+</head>
+<body>
+  <h1>欢迎来到第 9 组页面</h1>
+  <div>下一个提示倒计时：</div>
+  <div id="timer">05:00</div>
+  <div id="prompt" style="margin-top:20px;"></div>
+  
+  <script>
+    const prompts = [
+      "提示 1：保持专注。",
+      "提示 2：请继续任务。",
+      "提示 3：时间过得很快，加油！"
+    ];
+
+    let index = 0;
+    let time = 300;
+
+    function updateTimerDisplay() {
+      const minutes = String(Math.floor(time / 60)).padStart(2, '0');
+      const seconds = String(time % 60).padStart(2, '0');
+      document.getElementById("timer").innerText = `${minutes}:${seconds}`;
+    }
+
+    function showPrompt() {
+      const promptBox = document.getElementById("prompt");
+      if (index < prompts.length) {
+        const p = document.createElement("p");
+        p.innerText = prompts[index];
+        promptBox.appendChild(p);
+        index++;
+      } else {
+        const done = document.createElement("p");
+        done.innerText = "所有提示已显示完毕。";
+        promptBox.appendChild(done);
+      }
+    }
+
+    function startCountdown() {
+      updateTimerDisplay();
+      setInterval(() => {
+        time--;
+        updateTimerDisplay();
+
+        if (time <= 0) {
+          showPrompt();
+          time = 300;
+        }
+      }, 1000);
+    }
+
+    startCountdown();
+  </script>
+
+</body>
+</html>
