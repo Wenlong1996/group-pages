@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>输入组别</title>
+  <title>输入队伍</title>
   <style>
     body {
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
@@ -36,7 +36,7 @@
   </style>
 </head>
 <body>
-  <h2>请输入您的组别编号（1 - 31）</h2>
+  <h2>请输入您的队伍编号（1 - 31）</h2>
   <input type="number" id="groupNumber" min="1" max="31" />
   <br />
   <button onclick="goToGroupPage()">进入</button>
@@ -49,7 +49,7 @@
         const page = `page${group}.html`;
         window.location.href = page;
       } else {
-        alert("请输入有效的组别编号（1 到 31）");
+        alert("请输入有效的队伍编号（1 到 31）");
       }
     }
   </script>

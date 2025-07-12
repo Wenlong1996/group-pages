@@ -3,7 +3,7 @@
 <html>
 <head>
   <meta charset="UTF-8">
-  <title>第 28 组页面</title>
+  <title>第 28 队页面</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
     body {
@@ -31,25 +31,25 @@
       margin: 0.5rem 0;
     }
 
-    img, video {
+      img, video, iframe {
       max-width: 100%;
-      height: auto;
-      margin: 10px 0;
+      margin-top: 1rem;
     }
   </style>
 </head>
 <body>
-  <h1>欢迎来到第 28 组页面</h1>
+  <h1>欢迎来到第 28 队页面</h1>
   <div>下一个提示倒计时：</div>
   <div id="timer">05:00</div>
   <div id="prompt" style="margin-top:20px;"></div>
 
   <script>
     const prompts = [
-      { type: "text", content: "提示 1：保持专注。" },
-      { type: "image", content: "https://via.placeholder.com/300x200.png?text=图片提示" },
-      { type: "audio", content: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" },
-      { type: "video", content: "https://www.w3schools.com/html/mov_bbb.mp4" }
+      { type: "youtube", content: "https://www.youtube.com/embed/Dt7wUTZDNI8" },
+      { type: "text", content: "提示 ：旧约。" },
+      { type: "image", content: "https://raw.githubusercontent.com/Wenlong1996/group-pages/main/media/img1.jpg" },
+      { type: "audio", content: "https://raw.githubusercontent.com/Wenlong1996/group-pages/main/media/audio1.mp3" },
+      { type: "text", content: "提示 ：君王。" }
     ];
 
     let index = 0;
@@ -80,11 +80,14 @@
           element.src = prompt.content;
           element.controls = true;
           element.autoplay = true;
-        } else if (prompt.type === "video") {
-          element = document.createElement("video");
+        }  else if (prompt.type === "youtube") {
+          element = document.createElement("iframe");
           element.src = prompt.content;
-          element.controls = true;
-          element.autoplay = true;
+          element.width = "100%";
+          element.height = "215";
+          element.frameBorder = "0";
+          element.allow = "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture";
+          element.allowFullscreen = true;
         }
 
         promptBox.appendChild(element);
@@ -101,6 +104,7 @@
       }
     }
 
+
     function startCountdown() {
       updateTimerDisplay();
       timerInterval = setInterval(() => {
@@ -115,6 +119,7 @@
     }
 
     startCountdown();
+
   </script>
 </body>
 </html>
