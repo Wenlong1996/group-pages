@@ -34,6 +34,19 @@
       max-width: 100%;
       margin-top: 1rem;
     }
+
+    .round-block {
+      border: 2px dashed #ccc;
+      padding: 1rem;
+      margin-top: 1.5rem;
+      background-color: #fff;
+      border-radius: 10px;
+    }
+
+    .round-block h2 {
+      margin-top: 0;
+      color: darkred;
+    }
   </style>
 </head>
 <body>
@@ -47,10 +60,14 @@
   <div id="prompt" style="margin-top:20px;"></div>
 
 <script>
+  // 🕒 配置倒计时时间（单位：秒）
+  const PROMPT_INTERVAL = 5; // 每条线索之间300（改成 5 可测试）
+  const ROUND_INTERVAL = 10;  // 每轮之间600（改成 10 可测试）
+
   const rounds = [
     [
       { type: "audio", content: "https://raw.githubusercontent.com/campverano/group-pages/main/media/G1/G1_1/1.m4a" },
-      { type: "text", content: "第一轮线索 2：人们的影子比往常更瘦了。" },
+      { type: "text", content: "人们的影子比往常更瘦了" },
       { type: "image", content: "https://raw.githubusercontent.com/campverano/group-pages/main/media/G1/G1_1/3.jpg" }
     ],
     [
@@ -59,7 +76,7 @@
       { type: "image", content: "https://raw.githubusercontent.com/campverano/group-pages/main/media/G1/G1_2/3.png" }
     ],
     [
-      { type: "text", content: "第三轮线索 1：朝鲜 VS 韩国" },
+      { type: "text", content: "朝鲜 VS 韩国" },
       { type: "image", content: "https://raw.githubusercontent.com/campverano/group-pages/main/media/G1/G1_3/2.jpg" },
       { type: "image", content: "https://raw.githubusercontent.com/campverano/group-pages/main/media/G1/G1_3/3.png" }
     ]
@@ -71,7 +88,8 @@
   let currentRound = 0;
   let currentPrompt = 0;
   let isIntermission = false;
-  let timeLeft = 5;
+  let timeLeft = PROMPT_INTERVAL;
+  let currentRoundContainer = null;
 
   function updateTimerDisplay() {
     const min = String(Math.floor(timeLeft / 60)).padStart(2, '0');
@@ -80,6 +98,29 @@
   }
 
   function showPrompt(prompt) {
+    if (currentPrompt === 0 && !currentRoundContainer) {
+      currentRoundContainer = document.createElement("div");
+      currentRoundContainer.className = "round-block";
+      const title = document.createElement("h2");
+      title.innerText = `🔴 第 ${currentRound + 1} 轮`;
+      currentRoundContainer.appendChild(title);
+      promptBox.appendChild(currentRoundContainer);
+    }
+
+    const typeLabelMap = {
+      text: "💬",
+      image: "🖼️",
+      audio: "📢",
+      youtube: "🎬"
+    };
+
+    const label = typeLabelMap[prompt.type] || "📎";
+    const index = currentPrompt + 1;
+    const header = document.createElement("p");
+    header.innerText = `${label} 线索 ${index}（${prompt.type}）`;
+    header.style.fontWeight = "bold";
+    header.style.marginTop = "1rem";
+
     let element;
     if (prompt.type === "text") {
       element = document.createElement("p");
@@ -92,6 +133,7 @@
       element.src = prompt.content;
       element.controls = true;
       element.autoplay = true;
+      element.load();
     } else if (prompt.type === "youtube") {
       element = document.createElement("iframe");
       element.src = prompt.content;
@@ -101,7 +143,9 @@
       element.allow = "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture";
       element.allowFullscreen = true;
     }
-    promptBox.appendChild(element);
+
+    currentRoundContainer.appendChild(header);
+    currentRoundContainer.appendChild(element);
   }
 
   function showPromptNotice(msg) {
@@ -109,7 +153,11 @@
     notice.innerText = msg;
     notice.style.color = isIntermission ? "blue" : "green";
     notice.style.fontWeight = "bold";
-    promptBox.appendChild(notice);
+    if (currentRoundContainer) {
+      currentRoundContainer.appendChild(notice);
+    } else {
+      promptBox.appendChild(notice);
+    }
   }
 
   function startTimer() {
@@ -121,16 +169,17 @@
       if (timeLeft <= 0) {
         clearInterval(interval);
 
-        // 如果在轮间隔期，开始下一轮
         if (isIntermission) {
           isIntermission = false;
           currentRound++;
           currentPrompt = 0;
+          currentRoundContainer = null;
 
           if (currentRound < rounds.length) {
             showPromptNotice(`🔴 第 ${currentRound + 1} 轮开始`);
-            showPrompt(rounds[currentRound][currentPrompt++]);
-            timeLeft = 5;
+            showPrompt(rounds[currentRound][currentPrompt]);
+            currentPrompt++;
+            timeLeft = PROMPT_INTERVAL;
             startTimer();
           }
 
@@ -138,23 +187,22 @@
           const roundPrompts = rounds[currentRound];
 
           if (currentPrompt < roundPrompts.length) {
+            const isLast = currentPrompt === roundPrompts.length - 1;
             showPrompt(roundPrompts[currentPrompt]);
+            currentPrompt++;
 
-            // 判断是不是该轮的最后一个线索
-            if (currentPrompt === roundPrompts.length - 1) {
-              // 是最后一个线索
+            if (isLast) {
               if (currentRound + 1 >= rounds.length) {
                 showPromptNotice("🎉 所有线索已播放完毕！");
               } else {
                 showPromptNotice(`✅ 第 ${currentRound + 1} 轮线索已全部发放完毕，下一轮将在 10 分钟后开始`);
+                currentRoundContainer = null;
                 isIntermission = true;
-                timeLeft = 10;
+                timeLeft = ROUND_INTERVAL;
                 startTimer();
               }
             } else {
-              // 不是最后一个线索，正常间隔5分钟
-              currentPrompt++;
-              timeLeft = 5;
+              timeLeft = PROMPT_INTERVAL;
               startTimer();
             }
           }
@@ -170,7 +218,5 @@
     startTimer();
   };
 </script>
-
-
 </body>
 </html>
