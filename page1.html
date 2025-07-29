@@ -51,7 +51,7 @@
 </head>
 <body>
   <div style="color: red; font-weight: bold; font-size: 1.2rem; margin-bottom: 1rem;">
-    ⚠️ 请勿关闭页面，否则倒计时将从头开始！
+    ⚠️ 请勿关闭页面或者锁屏，否则倒计时将从头开始！
   </div>
 
   <h1>欢迎来到第 1 队页面</h1>
@@ -61,8 +61,8 @@
 
 <script>
   // 🕒 配置倒计时时间（单位：秒）
-  const PROMPT_INTERVAL = 5; // 每条线索之间300（改成 5 可测试）
-  const ROUND_INTERVAL = 10;  // 每轮之间600（改成 10 可测试）
+  const PROMPT_INTERVAL = 300; // 每条线索之间300（改成 5 可测试）
+  const ROUND_INTERVAL = 600;  // 每轮之间600（改成 10 可测试）
 
   const rounds = [
     [
@@ -195,7 +195,7 @@
               if (currentRound + 1 >= rounds.length) {
                 showPromptNotice("🎉 所有线索已播放完毕！");
               } else {
-                showPromptNotice(`✅ 第 ${currentRound + 1} 轮线索已全部发放完毕，下一轮将在 10 分钟后开始`);
+                showPromptNotice(`✅ 第 ${currentRound + 1} 轮线索已全部发放完毕，下一轮将在 倒计时结束后开始`);
                 currentRoundContainer = null;
                 isIntermission = true;
                 timeLeft = ROUND_INTERVAL;
